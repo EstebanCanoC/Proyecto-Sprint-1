@@ -88,9 +88,9 @@ let authUser = {};
 let userData = {};
 
 //Create a flag to the id number and password
-let idNumber;
+let idNumber = false;
 let validId = false;
-let password;
+let password = false;
 let validPassword = false;
 let validUser = false;
 
@@ -112,6 +112,8 @@ let deposit = 0;
 // create a flag to the withdraw
 let withdraw = 0;
 let totalWithraw = 0;
+let bills = 0;
+let avaliableBills = 0;
 
 // Create a loop to keep the program runing
 let online = true;
@@ -120,6 +122,17 @@ let online = true;
 let inProcess = true;
 
 while (online) {
+
+    // Clean the flags of the user
+    authUser = {};
+    userData = {};
+    validId = false;
+    validPassword = false;
+    validUser = false;
+    //Clean the flags of the proccess
+    withdraw = 0;
+    tempAmount = 0;
+    totalWithraw = 0;
 
     alert(`Bienvenido al cajero de Makaia`);
 
@@ -197,7 +210,7 @@ while (online) {
                         atmMoney = totalAmount;
                         totalAmount = 0;
 
-                    //if there is something in the ATM and an admon access show
+                        //if there is something in the ATM and an admon access show
                     } else {
                         // BAD LOOP => RECURSIVE LOOP >>> CONVERT TO A FUNCTION
                         for (let index = 0; index < atm.length; index++) {
@@ -248,77 +261,96 @@ while (online) {
                                 alert('El cajero no cuenta con fondos suficientes para realizar esta transaccion. \nIngrese un valor menor al anterior.');
                                 //Keep the process running while the withdraw was greater than the totalAmount in the ATM
                                 inProcess = true;
+                                continue;
 
-                            } else {
-                                //WITHDRAW PROCCESS --->.
-                                //Loop to get the data of the ATM
-                                for (let index = 0; index < atm.length; index++) {
-                                    tempAmount = atm[index].amount;
+                            }
+                            //WITHDRAW PROCCESS --->.
+                            //Loop to get the data of the ATM
+                            for (let index = 0; index < atm.length; index++) {
+                                tempAmount = atm[index].amount;
 
-                                    while (tempAmount > 0 && withdraw >= atm[index].denomination) {
-                                        //HERE SEARCH FOR THE AMOUNT AND THE QUANTITY BILLS --->
-                                        let bills = Math.floor(withdraw / atm[index].denomination);
-                                        //Save in the atmWithdraw to have the info of the amount of bills for each denomination
-                                        atmWithdraw[index].denomination = atm[index].denomination;
-                                        atmWithdraw[index].quantity = bills;
+                                //Proccess flag
+                                inProcess = true;
 
-                                        //withDraw the amonut of the client.
-                                        totalWithraw += bills * atm[index].denomination;
-                                        atm[index].quantity -= bills;
-                                        tempAmount -= bills * atm[index].denomination;
-                                        withdraw -= bills * atm[index].denomination;
-                                    }
+                                if (tempAmount > 0 && withdraw >= atm[index].denomination) {
+                                    //HERE SEARCH FOR THE AMOUNT AND THE QUANTITY BILLS --->
+                                    bills = Math.floor(withdraw / atm[index].denomination);
+                                    //Save in the atmWithdraw to have the info of the amount of bills for each denomination
+                                    atmWithdraw[index].denomination = atm[index].denomination;
+                                    atmWithdraw[index].quantity = bills;
+                                    //withDraw the amonut of the client.
+                                    totalWithraw += bills * atm[index].denomination;
+                                    atm[index].quantity -= bills;
+                                    tempAmount -= bills * atm[index].denomination;
+                                    withdraw -= bills * atm[index].denomination;
+
 
                                     //Save the amount delivered to the user
                                     tempAmount = totalWithraw;
-                                }
-                                //Operation was successfull, exit the loop
-                                console.log(`La cantidad de dinero entregada fue $${tempAmount}.`);
-                                //Show the amount of bills delivered with another loop at the atmWithdraw
-                                console.log(`A continuación se mostraran los billetes entregados a ${userData.name} durante la transacción.`);
-                                for (let index = 0; index < atmWithdraw.length; index++) {
-                                    if (atmWithdraw[index].quantity > 0) {
-                                        console.log(`Billetes de $${atmWithdraw[index].denomination}. \nEntregados es de: ${atmWithdraw[index].quantity}.`);
-                                        atmWithdraw[index].quantity = 0;
+
+                                    //Operation was successfull, exit the loop
+                                    console.log(`La cantidad de dinero entregada fue $${tempAmount}.`);
+                                    //Show the amount of bills delivered with another loop at the atmWithdraw
+                                    console.log(`A continuación se mostraran los billetes entregados a ${userData.name} durante la transacción.`);
+                                    for (let index = 0; index < atmWithdraw.length; index++) {
+                                        if (atmWithdraw[index].quantity > 0) {
+                                            console.log(`Billetes de $${atmWithdraw[index].denomination}. \nEntregados es de: ${atmWithdraw[index].quantity}.`);
+                                            atmWithdraw[index].quantity -= bills;
+                                        }
                                     }
+
+                                    alert('Proceso exitoso.\n');
+                                    alert(`Su retiro de $${tempAmount}. Ha sido un exito.`);
+                                    atmMoney -= tempAmount;
+                                    inProcess = false;
+                                } else {
+
+                                    //The denomination does not exist - we are on maintenance
+                                    alert('Su retiro fue parcial debido a que no tenemos billetes en las otras denominaciones.');
+                                    inProcess = false;
+                                    break;
                                 }
-
-                                alert('Proceso exitoso.\n');
-                                alert(`Su retiro de $${tempAmount}. Ha sido un exito.`);
-                                atmMoney -= tempAmount;
-                                inProcess = false;
-                                alert('sesion cerrada con exito.');
-
-                                //Last console logs with the status of the atm
-                                console.log(`La transacción del usuario ${userData.name} ha finalizado. \nA continuación se mostraran los billetes restantes en el cajero \nY el total.`);
-                                for (let index = 0; index < atm.length; index++) {
-                                    tempQuantity = atm[index].quantity;
-                                    tempAmount = atm[index].denomination * tempQuantity;
-                                    console.log(`Billete de -> $${atm[index].denomination}. \nCantidad de -> ${tempQuantity} \nPara un total de: $${tempAmount}. En billetes de $${atm[index].denomination}.`);
-                                }
-                                console.log(`El total en el ATM actualmente es: $${atmMoney}`);
-                                // Clean the flags of the user
-                                authUser = {};
-                                userData = {};
-                                validId = false;
-                                validPassword = false;
-                                validUser = false;
-
-                                //Clean the flags of the proccess
-                                withdraw = 0;
-                                tempAmount = 0;
-                                totalWithraw = 0;
-                                inProcess = false;
                             }
                         }
-                        //Clean the flag for the next users
-                        inProcess = true;
+                        //Singout
+                        alert('sesion cerrada con exito.');
+
+                        //Say Good Bye to the User{}
+                        alert(`Gracias por usar el cajero de Makaia ${userData.name}. \nVuelva pronto :)`);
+
+                        //Last console logs with the status of the atm
+                        console.log(`La transacción del usuario ${userData.name} ha finalizado. \nA continuación se mostraran los billetes restantes en el cajero \nY el total.`);
+                        for (let index = 0; index < atm.length; index++) {
+                            tempQuantity = atm[index].quantity;
+                            tempAmount = atm[index].denomination * tempQuantity;
+                            console.log(`Billete de -> $${atm[index].denomination}. \nCantidad de -> ${tempQuantity} \nPara un total de: $${tempAmount}. En billetes de $${atm[index].denomination}.`);
+                        }
+
+                        console.log(`El total en el ATM actualmente es: $${atmMoney}`);
+                        // Clean the flags of the user
+                        authUser = {};
+                        userData = {};
+                        validId = false;
+                        validPassword = false;
+                        validUser = false;
+
+                        //Clean the flags of the proccess
+                        withdraw = 0;
+                        tempAmount = 0;
+                        totalWithraw = 0;
+                        inProcess = false;
+
                     }
+                    //Clean the flag for the next users
+                    inProcess = true;
+
                 }
             }
-        } else {
+        }
+        else {
             continue;
         }
     }
 }
+
 alert(`Gracias por usar el cajero de Makaia. \nVuelva pronto :)`);
