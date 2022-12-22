@@ -4,25 +4,25 @@ let testUsers = [
     {
         name: 'Jane Doe',
         idNumber: '1234',
-        password: 'Admon000',
+        password: 'Admon',
         userType: 1
     },
     {
         name: 'John Doe',
         idNumber: '2341',
-        password: 'User000',
+        password: 'User',
         userType: 2
     },
     {
         name: 'Lennon',
         idNumber: '3412',
-        password: 'User001',
+        password: 'User2',
         userType: 2
     },
     {
         name: 'Elton',
         idNumber: '4123',
-        password: 'Admon002',
+        password: 'Admon2',
         userType: 1
     },
 
@@ -87,6 +87,7 @@ let deposit = 0;
 
 // create a flag to the withdraw
 let withdraw = 0;
+let totalWithraw = 0;
 
 
 // Create a loop to keep the program runing
@@ -161,6 +162,9 @@ while (online) {
                         console.log('El cajero actualmente no tiene ningún depósito.');
                         for (let index = 0; index < atm.length; index++) {
                             deposit = parseInt(prompt(`Ingrese la cantidad de billetes que desea ingresar de $${atm[index].denomination}`));
+                            if (isNaN(deposit)) {
+                                deposit = 0;
+                            }
                             atm[index].quantity = deposit;
                             tempQuantity = atm[index].quantity;
                             tempAmount = atm[index].denomination * tempQuantity;
@@ -176,8 +180,8 @@ while (online) {
                             tempQuantity = atm[index].quantity;
                             tempAmount = atm[index].denomination * tempQuantity;
                         }
-                        alert(`Antes de su ingreso ${userData.name} \nEl cajero cuenta con un total de $${atmMoney}.`);
-                        console.log(`Antes de su ingreso ${userData.name} \nEl cajero cuenta con un total de $${atmMoney}.`);
+                        alert(`${userData.name} Antes de su ingreso \nEl cajero cuenta con un total de $${atmMoney}.`);
+                        console.log(`${userData.name} Antes de su ingreso \nEl cajero cuenta con un total de $${atmMoney}.`);
                         //Ask for the quantity for deposit with the same loop
                         for (let index = 0; index < atm.length; index++) {
                             tempQuantity = atm[index].quantity;
@@ -189,16 +193,14 @@ while (online) {
                         //Add the secondary entry for another administrator
                         for (let index = 0; index < atm.length; index++) {
                             deposit = parseInt(prompt(`Ingrese la cantidad de billetes que desea ingresar de $${atm[index].denomination}`));
+                            if (isNaN(deposit)) {
+                                deposit = 0;
+                            }
                             atm[index].quantity += deposit;
-                            console.log(atm[index].quantity);
                             tempQuantity = atm[index].quantity;
-                            console.log(tempQuantity);
                             tempAmount = atm[index].denomination * tempQuantity;
-                            console.log(tempAmount);
                             atm[index].amount = parseInt(tempAmount);
-                            console.log(atm[index].amount);
                             totalAmount += tempAmount;
-                            console.log(totalAmount);
                         }
                         atmMoney = totalAmount;
                         totalAmount = 0;
@@ -207,8 +209,8 @@ while (online) {
                     console.log(`El cajero tiene un total de $${atmMoney}.`);
 
                 } else {
-                    //User access -> Part 2. of the proccess Withdraw by the user
 
+                    //User access -> Part 2. of the proccess Withdraw by the user
                     //If the Atm is empty
                     if (atmMoney === 0) {
                         alert('Cajero en mantenimiento, vuelva pronto.');
@@ -225,28 +227,42 @@ while (online) {
 
                             } else {
                                 //WITHDRAW PROCCESS --->.
-                                do {
-                                    for (let index = 0; index < atm.length; index++) {
-                                        console.log(atm[index].amount)
-                                        withdraw = 0;
-                                    }
-                                } while (withdraw != 0);
                                 //Loop to get the data of the ATM
                                 for (let index = 0; index < atm.length; index++) {
-                                    if(withdraw >= atm[index].denomination){
+                                    tempAmount = atm[index].amount;
 
-                                        let bills = Math.floor(withdraw / atm[index]. denomination);
+                                    while (tempAmount > 0 && withdraw >= atm[index].denomination) {
+                                        //HERE SEARCH FOR THE AMOUNT AND THE QUANTITY BILLS --->
+                                        //console.log(`Withdraw in ${atm[index].denomination} position`)
+                                        let bills = Math.floor(withdraw / atm[index].denomination);
+                                        //console.log(bills);
+                                        totalWithraw += bills * atm[index].denomination;
                                         atm[index].quantity -= bills;
+                                        //console.log(atm[index].quantity)
                                         tempAmount -= bills * atm[index].denomination;
+                                        //console.log(tempAmount)
                                         withdraw -= bills * atm[index].denomination;
 
                                     }
-
+                                    tempAmount = totalWithraw;
                                 }
                                 //Operation was successfull, exit the loop
+                                console.log(`La cantidad de dinero entregada fue $${tempAmount}`)
                                 alert('Proceso exitoso.\n');
+                                alert(`Su retiro de $${tempAmount}. Ha sido un exito.`)
+                                atmMoney -= tempAmount;
                                 inProcess = false;
                                 alert('sesion cerrada con exito.');
+
+                                //Last console logs with the status of the atm
+                                console.log(`La transacción del usuario ${userData.name} ha finalizado. \nA continuación se mostraran los billetes restantes en el cajero \nY el total.`)
+                                for (let index = 0; index < atm.length; index++) {
+                                    tempQuantity = atm[index].quantity;
+                                    tempAmount = atm[index].denomination * tempQuantity;
+                                    console.log(`Billete de -> $${atm[index].denomination} \nCantidad de -> ${tempQuantity} \nPara un total de: $${tempAmount} en billetes de $${atm[index].denomination}.`)
+                                }
+                                console.log(`El total en el ATM actialmente es: $${atmMoney}`)
+
                             }
                         }
                     }
