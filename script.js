@@ -28,7 +28,7 @@ let testUsers = [
 
 ]
 
-// Create the atm array
+// Create the atm array for save the money
 let atm = [
     {
         denomination: 100000,
@@ -96,7 +96,7 @@ let validUser = false;
 
 //Create a flag to the admon action select
 let action = 1;
-let confirm;
+let confirm = 0;
 
 //create the flag balance to gather the amount of bills
 let totalAmount = 0;
@@ -133,9 +133,11 @@ while (online) {
     } else if (online === '0') {
         online = false;
     } else {
-        //Add the property name to the "fake" object.
+
+        //Keep the program running
         online = true;
 
+        //Add the property name to the "fake" object.
         idNumber = (prompt(`Ingrese su número de documento`));
         // Find data name using FOR LOOP
         // This for is to find the user doc in the array
@@ -195,8 +197,8 @@ while (online) {
                         atmMoney = totalAmount;
                         totalAmount = 0;
 
+                    //if there is something in the ATM and an admon access show
                     } else {
-                        //if there is something in "cash" and an admon access show
                         // BAD LOOP => RECURSIVE LOOP >>> CONVERT TO A FUNCTION
                         for (let index = 0; index < atm.length; index++) {
                             tempQuantity = atm[index].quantity;
@@ -277,6 +279,7 @@ while (online) {
                                 for (let index = 0; index < atmWithdraw.length; index++) {
                                     if (atmWithdraw[index].quantity > 0) {
                                         console.log(`Billetes de $${atmWithdraw[index].denomination}. \nEntregados es de: ${atmWithdraw[index].quantity}.`);
+                                        atmWithdraw[index].quantity = 0;
                                     }
                                 }
 
@@ -294,18 +297,25 @@ while (online) {
                                     console.log(`Billete de -> $${atm[index].denomination}. \nCantidad de -> ${tempQuantity} \nPara un total de: $${tempAmount}. En billetes de $${atm[index].denomination}.`);
                                 }
                                 console.log(`El total en el ATM actualmente es: $${atmMoney}`);
+                                // Clean the flags of the user
+                                authUser = {};
+                                userData = {};
+                                validId = false;
+                                validPassword = false;
+                                validUser = false;
+
+                                //Clean the flags of the proccess
+                                withdraw = 0;
+                                tempAmount = 0;
+                                totalWithraw = 0;
+                                inProcess = false;
                             }
                         }
+                        //Clean the flag for the next users
+                        inProcess = true;
                     }
-                    validUser = false;
-                    validId = false;
-                    validPassword = false;
-                    userData = {};
                 }
             }
-            validUser = false;
-            validId = false;
-            validPassword = false;
         } else {
             continue;
         }
