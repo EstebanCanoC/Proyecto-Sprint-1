@@ -155,7 +155,7 @@ while (online) {
             // Confirm the two parameters
             if (validUser) {
                 if (userData.userType === 1) {
-                    alert(`Bienvenido ${userData.name} (ADMON)`);
+                    alert(`Bienvenido ${userData.name}`);
                     if (atmMoney === 0) {
                         alert('El cajero actualmente no tiene ningún depósito.');
                         console.log('El cajero actualmente no tiene ningún depósito.');
@@ -177,7 +177,7 @@ while (online) {
                             tempAmount = atm[index].denomination * tempQuantity;
                         }
                         alert(`Antes de su ingreso ${userData.name} \nEl cajero cuenta con un total de $${atmMoney}.`);
-                        console.log(`Después de el ingreso realizado por ${userData.name} \nEl cajero tiene  ahora un total de $${atmMoney}.`);
+                        console.log(`Antes de su ingreso ${userData.name} \nEl cajero cuenta con un total de $${atmMoney}.`);
                         //Ask for the quantity for deposit with the same loop
                         for (let index = 0; index < atm.length; index++) {
                             tempQuantity = atm[index].quantity;
@@ -219,7 +219,7 @@ while (online) {
                             withdraw = prompt(`Bienvenido ${userData.name} \nIngrese la cantidad desada para retirar \n`)
                             //Check if the amount is greater than the balance
                             if (withdraw > atmMoney) {
-                                alert('El cajero no cuenta con fondos suficientes para realizar esta transaccion. \n Ingrese un valor menor al anterior.');
+                                alert('El cajero no cuenta con fondos suficientes para realizar esta transaccion. \nIngrese un valor menor al anterior.');
                                 //Keep the process running while the withdraw was greater than the totalAmount in the ATM
                                 inProcess = true;
 
@@ -227,20 +227,24 @@ while (online) {
                                 //WITHDRAW PROCCESS --->.
                                 do {
                                     for (let index = 0; index < atm.length; index++) {
-
                                         console.log(atm[index].amount)
                                         withdraw = 0;
                                     }
                                 } while (withdraw != 0);
                                 //Loop to get the data of the ATM
                                 for (let index = 0; index < atm.length; index++) {
+                                    if(withdraw >= atm[index].denomination){
 
-                                    tempQuantity = atm[index].quantity;
-                                    tempAmount = atm[index].denomination * tempQuantity;
+                                        let bills = Math.floor(withdraw / atm[index]. denomination);
+                                        atm[index].quantity -= bills;
+                                        tempAmount -= bills * atm[index].denomination;
+                                        withdraw -= bills * atm[index].denomination;
+
+                                    }
 
                                 }
                                 //Operation was successfull, exit the loop
-                                alert('Proceso exitoso.\n FIN mostrar los console log');
+                                alert('Proceso exitoso.\n');
                                 inProcess = false;
                                 alert('sesion cerrada con exito.');
                             }
