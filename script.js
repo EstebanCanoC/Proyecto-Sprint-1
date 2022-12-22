@@ -57,6 +57,30 @@ let atm = [
     }
 ]
 
+// To count the withdraw bills
+let atmWithdraw = [
+    {
+        denomination: 100000,
+        quantity: 0,
+    },
+    {
+        denomination: 50000,
+        quantity: 0,
+    },
+    {
+        denomination: 20000,
+        quantity: 0,
+    },
+    {
+        denomination: 10000,
+        quantity: 0,
+    },
+    {
+        denomination: 5000,
+        quantity: 0,
+    }
+];
+
 // ---> To find an equivalence between two objects, the first thing is create a reference of the object to search
 
 //Create a flag object to validate the data
@@ -89,22 +113,19 @@ let deposit = 0;
 let withdraw = 0;
 let totalWithraw = 0;
 
-
 // Create a loop to keep the program runing
 let online = true;
 
 //keep the user "online"
 let inProcess = true;
 
-
 while (online) {
 
     alert(`Bienvenido al cajero de Makaia`);
 
-    //Test menu
+    //Menu
 
     online = prompt(`Digite ->  1   Para ingresar con su número de documento y contraseña. \nDigite ->  0   Si desea salir. `);
-    //   console.log(online)
 
     if (online === '' || (online !== '1' && online !== '0')) {
         alert('NO ha ingresado ninguna opción  valida, seleccione de nuevo');
@@ -173,8 +194,9 @@ while (online) {
                         }
                         atmMoney = totalAmount;
                         totalAmount = 0;
-                        //if there is something in "cash" and an admon access show
+
                     } else {
+                        //if there is something in "cash" and an admon access show
                         // BAD LOOP => RECURSIVE LOOP >>> CONVERT TO A FUNCTION
                         for (let index = 0; index < atm.length; index++) {
                             tempQuantity = atm[index].quantity;
@@ -186,8 +208,8 @@ while (online) {
                         for (let index = 0; index < atm.length; index++) {
                             tempQuantity = atm[index].quantity;
                             tempAmount = atm[index].denomination * tempQuantity;
-                            alert(`Billete de -> $${atm[index].denomination} \nCantidad de -> ${tempQuantity} \nPara un total de: $${tempAmount} en billetes de $${atm[index].denomination}.`)
-                            console.log(`Billete de -> $${atm[index].denomination} \nCantidad de -> ${tempQuantity} \nPara un total de: $${tempAmount} en billetes de $${atm[index].denomination}.`)
+                            alert(`Billete de -> $${atm[index].denomination}. \nCantidad de -> ${tempQuantity} \nPara un total de: $${tempAmount} en billetes de $${atm[index].denomination}.`)
+                            console.log(`Billete de -> $${atm[index].denomination}. \nCantidad de -> ${tempQuantity} \nPara un total de: $${tempAmount} en billetes de $${atm[index].denomination}.`)
                         }
 
                         //Add the secondary entry for another administrator
@@ -218,7 +240,7 @@ while (online) {
                         //Create a loop to keep the operation in process
                         while (inProcess) {
                             //Ask for the amount of money to withdraw
-                            withdraw = prompt(`Bienvenido ${userData.name} \nIngrese la cantidad desada para retirar \n`)
+                            withdraw = prompt(`Bienvenido ${userData.name} \nIngrese la cantidad desada para retirar \n`);
                             //Check if the amount is greater than the balance
                             if (withdraw > atmMoney) {
                                 alert('El cajero no cuenta con fondos suficientes para realizar esta transaccion. \nIngrese un valor menor al anterior.');
@@ -233,39 +255,52 @@ while (online) {
 
                                     while (tempAmount > 0 && withdraw >= atm[index].denomination) {
                                         //HERE SEARCH FOR THE AMOUNT AND THE QUANTITY BILLS --->
-                                        //console.log(`Withdraw in ${atm[index].denomination} position`)
                                         let bills = Math.floor(withdraw / atm[index].denomination);
-                                        //console.log(bills);
+                                        //Save in the atmWithdraw to have the info of the amount of bills for each denomination
+                                        atmWithdraw[index].denomination = atm[index].denomination;
+                                        atmWithdraw[index].quantity = bills;
+
+                                        //withDraw the amonut of the client.
                                         totalWithraw += bills * atm[index].denomination;
                                         atm[index].quantity -= bills;
-                                        //console.log(atm[index].quantity)
                                         tempAmount -= bills * atm[index].denomination;
-                                        //console.log(tempAmount)
                                         withdraw -= bills * atm[index].denomination;
-
                                     }
+
+                                    //Save the amount delivered to the user
                                     tempAmount = totalWithraw;
                                 }
                                 //Operation was successfull, exit the loop
-                                console.log(`La cantidad de dinero entregada fue $${tempAmount}`)
+                                console.log(`La cantidad de dinero entregada fue $${tempAmount}.`);
+                                //Show the amount of bills delivered with another loop at the atmWithdraw
+                                console.log(`A continuación se mostraran los billetes entregados a ${userData.name} durante la transacción.`);
+                                for (let index = 0; index < atmWithdraw.length; index++) {
+                                    if (atmWithdraw[index].quantity > 0) {
+                                        console.log(`Billetes de $${atmWithdraw[index].denomination}. \nEntregados es de: ${atmWithdraw[index].quantity}.`);
+                                    }
+                                }
+
                                 alert('Proceso exitoso.\n');
-                                alert(`Su retiro de $${tempAmount}. Ha sido un exito.`)
+                                alert(`Su retiro de $${tempAmount}. Ha sido un exito.`);
                                 atmMoney -= tempAmount;
                                 inProcess = false;
                                 alert('sesion cerrada con exito.');
 
                                 //Last console logs with the status of the atm
-                                console.log(`La transacción del usuario ${userData.name} ha finalizado. \nA continuación se mostraran los billetes restantes en el cajero \nY el total.`)
+                                console.log(`La transacción del usuario ${userData.name} ha finalizado. \nA continuación se mostraran los billetes restantes en el cajero \nY el total.`);
                                 for (let index = 0; index < atm.length; index++) {
                                     tempQuantity = atm[index].quantity;
                                     tempAmount = atm[index].denomination * tempQuantity;
-                                    console.log(`Billete de -> $${atm[index].denomination} \nCantidad de -> ${tempQuantity} \nPara un total de: $${tempAmount} en billetes de $${atm[index].denomination}.`)
+                                    console.log(`Billete de -> $${atm[index].denomination}. \nCantidad de -> ${tempQuantity} \nPara un total de: $${tempAmount}. En billetes de $${atm[index].denomination}.`);
                                 }
-                                console.log(`El total en el ATM actialmente es: $${atmMoney}`)
-
+                                console.log(`El total en el ATM actualmente es: $${atmMoney}`);
                             }
                         }
                     }
+                    validUser = false;
+                    validId = false;
+                    validPassword = false;
+                    userData = {};
                 }
             }
             validUser = false;
