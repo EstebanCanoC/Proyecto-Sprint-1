@@ -262,7 +262,6 @@ while (online) {
                                 //Keep the process running while the withdraw was greater than the totalAmount in the ATM
                                 inProcess = true;
                                 continue;
-
                             }
                             //WITHDRAW PROCCESS --->.
                             //Loop to get the data of the ATM
@@ -303,13 +302,12 @@ while (online) {
                                     alert(`Su retiro de $${tempAmount}. Ha sido un exito.`);
                                     atmMoney -= tempAmount;
                                     inProcess = false;
-                                } else {
-
+                                } /* else {
                                     //The denomination does not exist - we are on maintenance
                                     alert('Su retiro fue parcial debido a que no tenemos billetes en las otras denominaciones.');
                                     inProcess = false;
                                     break;
-                                }
+                                } */
                             }
                         }
                         //Singout
